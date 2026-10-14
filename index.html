@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mini Fight Arena</title>
+<style>
+body{margin:0;background:#151827;color:white;text-align:center;font-family:sans-serif}
+h2{color:#50e3c2}
+#arena{height:240px;background:linear-gradient(#303d59,#171b2a);position:relative;overflow:hidden;border-bottom:6px solid #50e3c2}
+.fighter{position:absolute;bottom:0;width:48px;height:85px;border-radius:18px 18px 5px 5px}
+#p1{left:20%;background:#35b9ff}
+#p2{right:20%;background:#ff526b}
+.hp{height:16px;background:#444;margin:8px}
+#hp1{height:100%;width:100%;background:#35b9ff}
+#hp2{height:100%;width:100%;background:#ff526b}
+button,input{padding:13px;margin:5px;border:0;border-radius:10px;font-size:16px}
+button{background:#50e3c2;color:#101522;font-weight:bold}
+.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:8px}
+</style>
+</head>
+<body>
+<h2>🥊 MINI FIGHT ARENA</h2>
+<input id="nick" placeholder="닉네임" maxlength="12">
+<div>
+<input id="room" placeholder="방 코드">
+<button onclick="join()">방 입장</button>
+</div>
+<div id="status">혼자 연습 모드</div>
+<div class="hp"><div id="hp1"></div></div>
+<div class="hp"><div id="hp2"></div></div>
+<div id="arena">
+<div id="p1" class="fighter"></div>
+<div id="p2" class="fighter"></div>
+</div>
+<h3 id="message">파란색 플레이어를 조종해!</h3>
+<div class="controls">
+<button ontouchstart="move(-15)" onclick="move(-15)">◀</button>
+<button ontouchstart="jump()" onclick="jump()">점프</button>
+<button ontouchstart="move(15)" onclick="move(15)">▶</button>
+</div>
+<button onclick="attack()">👊 공격!</button>
+<button onclick="reset()">다시 하기</button>
+<script>
+let x=20,y=0,hp=100,enemy=100;
+let busy=false;
+function move(n){
+ x=Math.max(0,Math.min(85,x+n));
+ document.getElementById('p1').style.left=x+'%';
+}
+function jump(){
+ if(busy)return;
+ busy=true;
+ let p=document.getElementById('p1');
+ p.style.transform='translateY(-65px)';
+ setTimeout(()=>{p.style.transform='';busy=false},450);
+}
+function attack(){
+ if(Math.abs(x-75)<30){
+ enemy=Math.max(0,enemy-10);
+ document.getElementById('hp2').style.width=enemy+'%';
+ document.getElementById('message').textContent=enemy===0?'승리! 다시 하기를 눌러!':'공격 성공!';
+ }else{
+ document.getElementById('message').textContent='상대에게 더 가까이 가!';
+ }
+}
+function reset(){
+ x=20;hp=100;enemy=100;
+ document.getElementById('p1').style.left=x+'%';
+ document.getElementById('hp1').style.width='100%';
+ document.getElementById('hp2').style.width='100%';
+ document.getElementById('message').textContent='다시 싸워 보자!';
+}
+function join(){
+ let room=document.getElementById('room').value.trim();
+ let nick=document.getElementById('nick').value.trim()||'플레이어';
+ document.getElementById('status').textContent=room?'방 코드: '+room+' / 닉네임: '+nick:'방 코드를 입력해!';
+}
+</script>
+</body>
+</html>
